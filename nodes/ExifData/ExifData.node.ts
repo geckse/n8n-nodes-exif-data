@@ -213,7 +213,7 @@ export class ExifData implements INodeType {
 		// check if n8n custom storage path is set
 		// TODO: WHY is this not already done by n8n?
 		const storagePath = this.helpers.getStoragePath();
-		if(!fs.existsSync(storagePath)) {
+		if (!fs.existsSync(storagePath)) {
 			// attempt to create the storage path
 			try {
 				fs.mkdirSync(storagePath, { recursive: true });
@@ -224,7 +224,6 @@ export class ExifData implements INodeType {
 				});
 			}
 		}
-
 
 		for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
 			try {
@@ -241,7 +240,7 @@ export class ExifData implements INodeType {
 					});
 				}
 
-
+				// we do only images here
 				if (!extension || extension != 'jpg' && extension != 'png' && extension != 'heic' && extension != 'heif' && extension != 'tiff' && extension != 'gif' && extension != 'bmp' && extension != 'webp' && extension != 'jpeg') {
 					throw new NodeOperationError(this.getNode(), 'File extension ' + extension + ' is not supported', {
 						itemIndex,
@@ -250,10 +249,14 @@ export class ExifData implements INodeType {
 
 				const outputPropertyName = this.getNodeParameter('outputPropertyName', itemIndex) as string;
 
-
 				// TODO: exiftool is ran in child process, and it onl communicates with files on fs. Not Ideal.
 				var cleanedBinaryPropertyName = binaryPropertyName.replace(/[^a-zA-Z0-9]/g, '');
 				var temporaryFilePath = this.helpers.getStoragePath() + '/' + cleanedBinaryPropertyName + '.' + extension;
+
+				// clean exiftool tmp file, if it exists
+				if (fs.existsSync(temporaryFilePath + '_exiftool_tmp')) {
+					fs.unlinkSync(temporaryFilePath + '_exiftool_tmp');
+				}
 
 				// Write Temporary File
 				// Another Todo: Use n8n's function writeContentToFile. But it filtered out the storage path.
@@ -284,6 +287,10 @@ export class ExifData implements INodeType {
 				if (operation === 'write') {
 					const exifMetadata = this.getNodeParameter('exifMetadata', itemIndex) as any;
 
+					if (fs.existsSync(temporaryFilePath + '_exiftool_tmp')) {
+						console.log('EXIF NODE: Temporary file already exists. Please wait for the previous operation to finish.');
+					}
+
 					if (!exifMetadata.metadataValues.length) {
 						throw new NodeOperationError(this.getNode(), 'No metadata values provided. Please provide at least one metadata value.', {
 							itemIndex,
@@ -312,6 +319,8 @@ export class ExifData implements INodeType {
 					const exifResults = await Promise.all(
 						tags.map(async (tag: any) => {
 							const result = await exiftool.write(temporaryFilePath, tag);
+							// small delay to ensure the file is written
+							await new Promise(resolve => setTimeout(resolve, 500));
 							return {
 								...result,
 								tag: Object.keys(tag)[0]
@@ -319,6 +328,7 @@ export class ExifData implements INodeType {
 						})
 					);
 					items[itemIndex].json[outputPropertyName] = exifResults;
+
 
 				}
 

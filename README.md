@@ -73,6 +73,7 @@ Hi I'm geckse and I let your work flow! 👋
 I hope you are enjoying these nodes. If you are in need of a smooth automation, steady integration or custom code check my offering: https://let-the-work-flow.com
 
 ## Version History
-
+### 0.1.1
+- fix issue with non-existing storage path
 ### 0.1.0
 - initial release
