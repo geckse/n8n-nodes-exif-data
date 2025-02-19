@@ -210,6 +210,21 @@ export class ExifData implements INodeType {
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
 
+		// check if n8n custom storage path is set
+		// TODO: WHY is this not already done by n8n?
+		const storagePath = this.helpers.getStoragePath();
+		if(!fs.existsSync(storagePath)) {
+			// attempt to create the storage path
+			try {
+				fs.mkdirSync(storagePath, { recursive: true });
+			} catch (error) {
+				throw new NodeOperationError(this.getNode(), 'Failed to locate n8n storage path (' + storagePath + '). You might need to create this directory manually. Please check the node repository for more information and how to troubleshoot this issue.', {
+					itemIndex: 0,
+				});
+			}
+		}
+
+
 		for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
 			try {
 				const operation = this.getNodeParameter('operation', itemIndex);
