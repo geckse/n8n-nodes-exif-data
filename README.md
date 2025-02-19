@@ -50,7 +50,16 @@ That also makes it super easy to install and work within n8n – no extra headac
 ## Approach
 
 **exiftool-vendored** launches a Child-Process with a Vendored variant of Exiftool. This extra instance consumes apeox. 70mb extra RAM. <br>
-⚠️ This node writes temporary files to the n8n default storage path for custom nodes (.n8n/custom/storage/CUSTOM.exifData/). It was necessary to build it this way to make the file accessible for the child process. This means that for this node to work, this path needs to be writable. The node will also instantly remove the files from this temporary storage once they have been processed.
+⚠️ This node writes temporary files to the n8n default storage path for custom nodes (.n8n/custom/storage/n8n-nodes-exif-data.exifData/). It was necessary to build it this way to make the file accessible for the child process. This means that for this node to work, this path needs to be writable. The node will also instantly remove the files from this temporary storage once they have been processed. Path traversal is prohibited by the node.
+
+## Troubleshooting
+
+If you encounter any issues, please check the following:
+
+1. **Storage Path not writable**:
+- The node writes temporary files to the n8n default storage path for custom nodes (.n8n/custom/storage/)
+That may be missing on your system. Possible Solution: Create the directory manually (for example `mkdir .n8n/custom/storage/`)
+Note: This could vary for your system, there is an ENV Variable to change the storage path.
 
 ## Compatibility
 
