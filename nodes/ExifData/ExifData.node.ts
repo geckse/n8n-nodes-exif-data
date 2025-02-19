@@ -217,6 +217,7 @@ export class ExifData implements INodeType {
 			// attempt to create the storage path
 			try {
 				fs.mkdirSync(storagePath, { recursive: true });
+				console.log('EXIF NODE: Created storage path (' + storagePath + ')');
 			} catch (error) {
 				throw new NodeOperationError(this.getNode(), 'Failed to locate n8n storage path (' + storagePath + '). You might need to create this directory manually. Please check the node repository for more information and how to troubleshoot this issue.', {
 					itemIndex: 0,
