@@ -1,46 +1,69 @@
 ![Banner image](https://user-images.githubusercontent.com/10284570/173569848-c624317f-42b1-45a6-ab09-f0ea3c247648.png)
 
-# n8n-nodes-starter
+# Work with EXIF / IPTC / XMP Data from Image Files within n8n
 
-This repo contains example nodes to help you get started building your own custom integrations for [n8n](n8n.io). It includes the node linter and other dependencies.
+This community package contains a node to work with EXIF Data from Images.
 
-To make your custom node available to the community, you must create it as an npm package, and [submit it to the npm registry](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry).
 
-## Prerequisites
+That enables you to:
+* Add and embed custom keywords inside the image file
+* Strip specific metadata from the image file
+* Add copyright information
+* Extract "Made with AI" Information
+* Set "Made with AI" Information
+* Extract lens information
+* Modify date and time tag
+* Geo-tag images using GPS coordinates
+* Work with embedded Geo-tag Information
+* Identify which camera was used to take the photo
+* Set the image orientation parameter
+* Retrieve image resolution details
+* Extract and manipulate IPTC and XMP metadata
 
-You need the following installed on your development machine:
+[n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/reference/license/) workflow automation platform.
 
-* [git](https://git-scm.com/downloads)
-* Node.js and pnpm. Minimum version Node 18. You can find instructions on how to install both using nvm (Node Version Manager) for Linux, Mac, and WSL [here](https://github.com/nvm-sh/nvm). For Windows users, refer to Microsoft's guide to [Install NodeJS on Windows](https://docs.microsoft.com/en-us/windows/dev-environment/javascript/nodejs-on-windows).
-* Install n8n with:
-  ```
-  pnpm install n8n -g
-  ```
-* Recommended: follow n8n's guide to [set up your development environment](https://docs.n8n.io/integrations/creating-nodes/build/node-development-environment/).
+[Supported Operations](#supported-operations)  
+[Installation](#installation)  
+[Compatibility](#compatibility)  
+[About](#about)  
+[Version History](#version-history)  
 
-## Using this starter
+## Supported Operations
 
-These are the basic steps for working with the starter. For detailed guidance on creating and publishing nodes, refer to the [documentation](https://docs.n8n.io/integrations/creating-nodes/).
+| Operation  | Description | Options |
+| ------------- |  ------------- |  ------------- | 
+| Read  | Read all the embedded metadata of an Image | Read Raw (without any transformation / validation) |
+| Write  | Extend or override metadata of a given Image | Parse Input Fields (Transform Input to match desired Datatypes of known EXIF Fields) |
+| Repair  | Could help woth corrupted files. It will re-apply all existing valid EXIF Metadata to the file. | - |
+| Delete  | Removes All EXIF Metadata from the Image. With the additional field you can keep fields. | Optional: A list of field names to keep |
+| Send Custom Exiftool Command | Send a custom Exiftool Command. (At this moment only read operations possible) | - |
 
-1. [Generate a new repository](https://github.com/n8n-io/n8n-nodes-starter/generate) from this template repository.
-2. Clone your new repo:
-   ```
-   git clone https://github.com/<your organization>/<your-repo-name>.git
-   ```
-3. Run `pnpm i` to install dependencies.
-4. Open the project in your editor.
-5. Browse the examples in `/nodes` and `/credentials`. Modify the examples, or replace them with your own nodes.
-6. Update the `package.json` to match your details.
-7. Run `pnpm lint` to check for errors or `pnpm lintfix` to automatically fix errors when possible.
-8. Test your node locally. Refer to [Run your node locally](https://docs.n8n.io/integrations/creating-nodes/test/run-node-locally/) for guidance.
-9. Replace this README with documentation for your node. Use the [README_TEMPLATE](README_TEMPLATE.md) to get started.
-10. Update the LICENSE file to use your details.
-11. [Publish](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry) your package to npm.
+## Installation
+Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n community nodes documentation.
 
-## More information
+For a quickstart I've prepared an [example workflow](https://cloud.let-the-work-flow.com/workflows/exif-node.json).
 
-Refer to our [documentation on creating nodes](https://docs.n8n.io/integrations/creating-nodes/) for detailed information on building your own nodes.
+This node essentially wraps **Exiftool** as node vendored variant to work with the metadata.
+Possible by this great [repository](https://github.com/photostructure/exiftool-vendored.js) by photostructure. Huge Shoutout to the contributors to that repo. 
+That also makes it super easy to install and work within n8n – no extra headaches by installing exiftool inside the Docker / on the Server. 
 
-## License
+## Approach
 
-[MIT](https://github.com/n8n-io/n8n-nodes-starter/blob/master/LICENSE.md)
+**exiftool-vendored** launches a Child-Process with a Vendored variant of Exiftool. This extra instance consumes apeox. 70mb extra RAM. <br>
+⚠️ This node writes temporary files to the n8n default storage path for custom nodes (.n8n/custom/storage/CUSTOM.exifData/). It was necessary to build it this way to make the file accessible for the child process. This means that for this node to work, this path needs to be writable. The node will also instantly remove the files from this temporary storage once they have been processed.
+
+## Compatibility
+
+The Latest Version of n8n. If you encounter any problem, feel free to [open an issue](https://github.com/geckse/n8n-nodes-exif-data) on Github. 
+
+## About
+
+<img src="https://cloud.let-the-work-flow.com/logo-64.png" align="left" height="64" width="64"> 
+<br>
+Hi I'm geckse and I let your work flow! 👋 
+I hope you are enjoying these nodes. If you are in need of a smooth automation, steady integration or custom code check my offering: https://let-the-work-flow.com
+
+## Version History
+
+### 0.1.0
+- initial release
