@@ -163,7 +163,8 @@ export class ExifData implements INodeType {
 								displayName: 'Name',
 								name: 'name',
 								type: 'string',
-								default: 'Name of the metadata key to add.',
+								default: '',
+								description: 'Name of the metadata key to add.',
 							},
 							{
 								displayName: 'Value',

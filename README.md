@@ -41,6 +41,16 @@ That enables you to:
 ## Installation
 Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n community nodes documentation.
 
+Additionally the exiftool-vendored.js library requires **perl** to be installed on your system.
+On most systems perl is already installed. If not (most likely for Docker), you can install it via your package manager.
+Add this to your Dockerfile:
+```RUN apk add perl```
+
+Or manually install in your docker container: (not so recommended)
+```docker exec -u root -it n8n-container-id apk add perl```
+
+More information regarding possible installation steps can be found in the [exiftool-vendored.js repository](https://github.com/photostructure/exiftool-vendored.js).
+
 For a quickstart I've prepared an [example workflow](https://cloud.let-the-work-flow.com/workflows/exif-node.json).
 
 This node essentially wraps **Exiftool** as node vendored variant to work with the metadata.
@@ -50,16 +60,23 @@ That also makes it super easy to install and work within n8n – no extra headac
 ## Approach
 
 **exiftool-vendored** launches a Child-Process with a Vendored variant of Exiftool. This extra instance consumes apeox. 70mb extra RAM. <br>
-⚠️ This node writes temporary files to the n8n default storage path for custom nodes (.n8n/custom/storage/n8n-nodes-exif-data.exifData/). It was necessary to build it this way to make the file accessible for the child process. This means that for this node to work, this path needs to be writable. The node will also instantly remove the files from this temporary storage once they have been processed. Path traversal is prohibited by the node.
+<br>⚠️ This node writes temporary files to the n8n default storage path for custom nodes (.n8n/custom/storage/n8n-nodes-exif-data.exifData/). It was necessary to build it this way to make the file accessible for the child process. This means that for this node to work, this path needs to be writable. The node will also instantly remove the files from this temporary storage once they have been processed. Path traversal is prohibited by the node.
 
 ## Troubleshooting
 
 If you encounter any issues, please check the following:
 
-1. **Storage Path not writable**:
+1. **Perl is missing**:
+- The depency inside this node requires perl to be installed on your system. Check the [Installation](#installation) section for more information.
+
+2. **Storage Path not writable**:
 - The node writes temporary files to the n8n default storage path for custom nodes (.n8n/custom/storage/)
 That may be missing on your system. Possible Solution: Create the directory manually (for example `mkdir .n8n/custom/storage/`)
-Note: This could vary for your system, there is an ENV Variable to change the storage path.
+Note: This could vary for your system, there is an ENV Variable to change the storage path. Also make sure that n8n can write to this path.
+
+3. **Temporary file not deleted**:
+- Especially the *_exiftool_tmp might be blocking further write operations. This happens when exiftool runs into an bad error. Further Write Operations will fail with that error.
+- Possible Solution: Restart n8n. If the problem persists, check solutions for this within the exiftool community. It's a known issue, apperantly often caused by antivirus software.
 
 ## Compatibility
 

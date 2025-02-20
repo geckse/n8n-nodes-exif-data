@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-exif-data",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A n8n Node to Read and Write EXIF-Data from and to Image Files utilizing a vendoered version of Exiftool",
   "keywords": [
     "n8n-community-node-package",
@@ -35,7 +35,7 @@
     "format": "prettier nodes --write",
     "lint": "eslint nodes package.json",
     "lintfix": "eslint nodes package.json --fix",
-    "prepublishOnly": "pnpm build && pnpm lint -c .eslintrc.prepublish.js nodes credentials package.json"
+    "prepublishOnly": "pnpm build && pnpm lint -c .eslintrc.prepublish.js nodes package.json"
   },
   "files": [
     "dist"
