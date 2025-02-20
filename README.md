@@ -44,10 +44,14 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 Additionally the exiftool-vendored.js library requires **perl** to be installed on your system.
 On most systems perl is already installed. If not (most likely for Docker), you can install it via your package manager.
 Add this to your Dockerfile:
-```RUN apk add perl```
+```bash
+RUN apk add perl
+```
 
 Or manually install in your docker container: (not so recommended)
-```docker exec -u root -it n8n-container-id apk add perl```
+```bash
+docker exec -u root -it n8n-container-id apk add perl
+```
 
 More information regarding possible installation steps can be found in the [exiftool-vendored.js repository](https://github.com/photostructure/exiftool-vendored.js).
 
@@ -90,6 +94,8 @@ Hi I'm geckse and I let your work flow! 👋
 I hope you are enjoying these nodes. If you are in need of a smooth automation, steady integration or custom code check my offering: https://let-the-work-flow.com
 
 ## Version History
+### 0.1.2
+- small fixes and Installation Notes added
 ### 0.1.1
 - fix issue with non-existing storage path
 ### 0.1.0
